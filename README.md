@@ -1,4 +1,4 @@
-# Code sample and supporting data for the paper
+# Code examples and supporting data for the paper
 # [*Learning and avoiding disorder in multimode fibers*](https://arxiv.org)
 ## **M. W. Matthès, Y. Bromberg, J. de Rosny and S. M. Popoff**
 
@@ -25,7 +25,7 @@ See section 2.1 of the Supplementary Information.
 
 - [Generate_theoretical_modes/Generate_modes.ipynb](./Generate_theoretical_modes/Generate_modes.ipynb): 
 Jupyter notebook containing an sample code to compute the theoretical mode profiles knowing the properties of the multimode fiber.
-- [Generate_theoretical_modes/functions.py](./Generate_theoretical_modes/functions.ipynb): 
+- [Generate_theoretical_modes/functions.py](./Generate_theoretical_modes/functions.py): 
 Some useful function to generate the plots.
 
 ## /Aberration_correction
@@ -37,6 +37,18 @@ It requires a TM measured in the pixel basis and the tehoretical modes.
 It learns the aberrations and misalignments of the optical system and compensate for them. It outputs a TM in the basis of the fiber modes.
 
 - [Aberration_correction/functions.py](./Aberration_correction/functions.py): 
+Some useful function to generate the plots.
+
+## /Analysis
+Processing of the results and creation of the plots.
+
+* [Analysis_Deformation.ipynb](./Analysis/Analysis_Deformation.ipynb):
+Data processing and creation of the figures in the main text of the article.
+
+* [Figures_SI.ipynb](./Analysis/Figures_SI.ipynb):
+Data processing and creation of the figures for the Supplementary Information.
+
+* [functions.py](./Analysis/functions.py):
 Some useful function to generate the plots.
 
 
