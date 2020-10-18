@@ -86,6 +86,9 @@ See section 1.2 of the Supplementary Information.
 * [Demo_layout.ipynb](./Layout/Demo_layout.ipynb):
 A sample code to generate input patterns to send on the DMD.
 
+## More information
+
+Visit our website on [Wavefrontshaping.net](https://wavefrontshaping.net) for more information, codes and tutorials.
 
 
 
