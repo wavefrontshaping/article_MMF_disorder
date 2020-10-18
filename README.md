@@ -2,6 +2,11 @@
 # [*Learning and avoiding disorder in multimode fibers*](https://arxiv.org)
 ## **M. W. Matthès, Y. Bromberg, J. de Rosny and S. M. Popoff**
 
+
+**Global requirements:**
+- Numpy
+- Matplotlib
+
 ## /Data
 Contain the raw and processed data required to generate the figures and to run the demo codes. 
 - `param.json`: json file containing the parameters of the experiment
@@ -9,7 +14,7 @@ Contain the raw and processed data required to generate the figures and to run t
 - `TM5_0.npy` and `TM5_1.npy`: full transmission matrix in the pixel basis for the reference stat of the system, i.e. no deformation (<img src="https://render.githubusercontent.com/render/math?math=\Delta x = 0 \mu m">).
 Because of the 100 Mo restriction of Github, the file is split into two, can be recombined with:
 ```python
-IMPORT NUMPY AS NP
+import numpy as np
 part1 = np.load('TM5_0.npy')
 part2 = np.load('TM5_1.npy')
 TM_ref_pix = np.concatenate([part1, part2], axis = 0)
@@ -21,6 +26,11 @@ TM_ref_pix = np.concatenate([part1, part2], axis = 0)
 - `mask_near_degenerate.npy`: a mask of the same size as the mode basis TM that represents the blocks of quasi-degenerate modes. 
 
 ## /Generate_theoretical_modes
+
+Calculation of the theoretical fiber modes.
+
+**Requires:** [pyMMF](https://github.com/wavefrontshaping/pyMMF)
+
 See section 2.1 of the Supplementary Information.
 
 - [Generate_theoretical_modes/Generate_modes.ipynb](./Generate_theoretical_modes/Generate_modes.ipynb): 
@@ -29,7 +39,10 @@ Jupyter notebook containing an sample code to compute the theoretical mode profi
 Some useful function to generate the plots.
 
 ## /Aberration_correction
+
 See section 2.2 of the Supplementary Information.
+
+**Requires:** [PyTorch](https://www.pytorch.org)
 
 - [Aberration_correction/Demo_correction_aberration.ipynb](./Aberration_correction/Demo_correction_aberration.ipynb): 
 Demo code to use the aberration correction model based on PyTorch framework.
@@ -38,6 +51,15 @@ It learns the aberrations and misalignments of the optical system and compensate
 
 - [Aberration_correction/functions.py](./Aberration_correction/functions.py): 
 Some useful function to generate the plots.
+
+- [PyTorchAberrations/aberration_models.py](./Aberration_correction/PyTorchAberrations/aberration_models.py):
+The PyTorch model to apply a set of aberrations and a deformation to the change of basis matrices.
+
+- [PyTorchAberrations/aberration_layers.py](./Aberration_correction/PyTorchAberrations/aberration_layers.py):
+Individual custom layers corresponding to each aberration/deformation we can introduce in the model.
+
+- [PyTorchAberrations/aberration_functions.py](./Aberration_correction/PyTorchAberrations/aberration_functions.py):
+Useful PyTorch functions, in particular to handle complex linear operations using to layers for the real and imaginary parts.
 
 ## /Analysis
 Processing of the results and creation of the plots.
@@ -50,6 +72,22 @@ Data processing and creation of the figures for the Supplementary Information.
 
 * [functions.py](./Analysis/functions.py):
 Some useful function to generate the plots.
+
+## /Layout
+
+Generation of input mask on the digital micro-mirror device.
+
+
+See section 1.2 of the Supplementary Information.
+
+
+**Requires:** [SLMLayout](https://github.com/wavefrontshaping/Layout)
+
+* [Demo_layout.ipynb](./Layout/Demo_layout.ipynb):
+A sample code to generate input layouts.
+
+
+
 
 
 
