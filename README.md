@@ -1,13 +1,15 @@
 # Code sample and supporting data for the paper
 # [*Learning and avoiding disorder in multimode fibers*](https://arxiv.org)
-# **M. W. Matthès, Y. Bromberg, J. de Rosny and S. M. Popoff**
+## **M. W. Matthès, Y. Bromberg, J. de Rosny and S. M. Popoff**
 
 ## /Data
+Contain the raw and processed data required to generate the figures and to run the demo codes. 
 - `param.json`: json file containing the parameters of the experiment
 - `TM_modes_X.npz`: transmission matrix in the mode basis after correction for the deformation <img src="https://render.githubusercontent.com/render/math?math=\Delta x = X \mu m">
 - `TM5_0.npy` and `TM5_1.npy`: full transmission matrix in the pixel basis for the reference stat of the system, i.e. no deformation (<img src="https://render.githubusercontent.com/render/math?math=\Delta x = 0 \mu m">).
 Because of the 100 Mo restriction of Github, the file is split into two, can be recombined with:
 ```python
+IMPORT NUMPY AS NP
 part1 = np.load('TM5_0.npy')
 part2 = np.load('TM5_1.npy')
 TM_ref_pix = np.concatenate([part1, part2], axis = 0)
@@ -17,3 +19,25 @@ TM_ref_pix = np.concatenate([part1, part2], axis = 0)
 - `modes_in_after_correction.npy`: Change of basis matrix between the input mode basis and the input pixel basis after aberration correction optimization.
 - `modes_out_after_correction.npy`: Change of basis matrix between the output mode basis and the output pixel basis after aberration correction optimization.
 - `mask_near_degenerate.npy`: a mask of the same size as the mode basis TM that represents the blocks of quasi-degenerate modes. 
+
+## /Generate_theoretical_modes
+See section 2.1 of the Supplementary Information.
+
+- [Generate_theoretical_modes/Generate_modes.ipynb](./Generate_theoretical_modes/Generate_modes.ipynb): 
+Jupyter notebook containing an sample code to compute the theoretical mode profiles knowing the properties of the multimode fiber.
+- [Generate_theoretical_modes/functions.py](./Generate_theoretical_modes/functions.ipynb): 
+Some useful function to generate the plots.
+
+## /Aberration_correction
+See section 2.2 of the Supplementary Information.
+
+- [Aberration_correction/Demo_correction_aberration.ipynb](./Aberration_correction/Demo_correction_aberration.ipynb): 
+Demo code to use the aberration correction model based on PyTorch framework.
+It requires a TM measured in the pixel basis and the tehoretical modes.
+It learns the aberrations and misalignments of the optical system and compensate for them. It outputs a TM in the basis of the fiber modes.
+
+- [Aberration_correction/functions.py](./Aberration_correction/functions.py): 
+Some useful function to generate the plots.
+
+
+
