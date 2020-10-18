@@ -10,7 +10,7 @@ def getZernikeCoefs(states):
     coefs_list = [torch.Tensor.cpu(states[name]).numpy()[0] for name in states.keys()]
     return coefs_list
 
-def showZernikeCoefs(zernike_coefs, thresh = 10, **kwargs):
+def showZernikeCoefs(zernike_coefs, thresh = 10, title = None, **kwargs):
     '''
     Allows a nice display of the amplitude for each Zernike coefficient
 
@@ -29,19 +29,18 @@ def showZernikeCoefs(zernike_coefs, thresh = 10, **kwargs):
                  'tref_V','coma_V','coma_H','tref_H',
                  'quad_H','sec_astigm_H','spherical','sec_astigm_V','quad_V']
     
+    title = title or 'Zernike Coefficients values'
+    
+    
     important_coef_index = [] 
     for i in range(len(zernike_names)):
         if np.abs(zernike_coefs[i]) > thresh: # completely arbitrary value
             important_coef_index.append(i)
             
-    if 'fig' not in kwargs:
-        fig = plt.figure(figsize = (12,7))
-    else:
-        fig = kwargs['fig']
-    if 'ax1' not in kwargs:
-        ax1 = fig.add_subplot(111)
-    else:
-        ax1 = kwargs['ax1']
+
+    fig = plt.figure(figsize = (10,6))
+    ax1 = fig.add_subplot(111)
+
     ax1.plot(zernike_names,zernike_coefs,'o')
     ax1.set_xticklabels(zernike_names, rotation=40, ha='right')
     ax1.grid(axis = 'x',ls = ':')
@@ -65,6 +64,7 @@ def showZernikeCoefs(zernike_coefs, thresh = 10, **kwargs):
         ax1.get_xticklabels()[index_label].set_color('red')
         ax2.get_xticklabels()[index_label].set_color('red')
     fig.subplots_adjust(bottom=0.15)
-    plt.title('Zernike Coefficients values')
+    plt.title(title)
+    plt.tight_layout()
 
     return fig, ax1, important_coef_index
