@@ -75,7 +75,7 @@ Some useful function to generate the plots.
 
 ## /Layout
 
-Generation of input mask on the digital micro-mirror device.
+Generation of input mask on the digital micro-mirror device (DMD)
 
 
 See section 1.2 of the Supplementary Information.
@@ -84,7 +84,7 @@ See section 1.2 of the Supplementary Information.
 **Requires:** [SLMLayout](https://github.com/wavefrontshaping/Layout)
 
 * [Demo_layout.ipynb](./Layout/Demo_layout.ipynb):
-A sample code to generate input layouts.
+A sample code to generate input patterns to send on the DMD.
 
 
 
