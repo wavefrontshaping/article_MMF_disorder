@@ -1,5 +1,5 @@
 # Code examples and supporting data for the paper
-# [*Learning and avoiding disorder in multimode fibers*](https://arxiv.org)
+# *Learning and avoiding disorder in multimode fibers*
 ## **M. W. Matthès, Y. Bromberg, J. de Rosny and S. M. Popoff**
 
 
@@ -59,7 +59,7 @@ The PyTorch model to apply a set of aberrations and a deformation to the change 
 Individual custom layers corresponding to each aberration/deformation we can introduce in the model.
 
 - [PyTorchAberrations/aberration_functions.py](./Aberration_correction/PyTorchAberrations/aberration_functions.py):
-Useful PyTorch functions, in particular to handle complex linear operations using to layers for the real and imaginary parts.
+Useful PyTorch functions, in particular to handle complex linear operations using two layers for the real and imaginary parts.
 
 ## /Analysis
 Processing of the results and creation of the plots.
