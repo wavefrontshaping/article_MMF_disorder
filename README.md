@@ -3,7 +3,7 @@
 ## **M. W. Matthès, Y. Bromberg, J. de Rosny and S. M. Popoff**
 
 
-`
+```
 @misc{2010.14813,
 author = {Maxime W. Matthès and Yaron Bromberg and Julien de Rosny and Sébastien M. Popoff},
 yitle = {Learning and avoiding disorder in multimode fibers},
@@ -12,7 +12,7 @@ archivePrefix = "arXiv",
 eprint = {arXiv:2010.14813},
 url = {https://arxiv.org/abs/2010.14813},
 }
-`
+```
 
 **Global requirements:**
 - Numpy
