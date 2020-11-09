@@ -1,9 +1,10 @@
 from colorsys import hls_to_rgb
 import numpy as np
+import matplotlib.pyplot as plt
 
-def colorize(z, theme = 'dark', saturation = 1., beta = 1.4, transparent = False, alpha = 1.):
+def colorize(z, theme = 'dark', saturation = 1., beta = 1.4, transparent = False, alpha = 1., max_threshold = 1):
     r = np.abs(z)
-    r /= np.max(np.abs(r))
+    r /= max_threshold*np.max(np.abs(r))
     arg = np.angle(z) 
 
     h = (arg + np.pi)  / (2 * np.pi) + 0.5
@@ -19,7 +20,23 @@ def colorize(z, theme = 'dark', saturation = 1., beta = 1.4, transparent = False
         return np.concatenate([c,alpha_channel], axis = -1)
     else:
         return c
-    
+ 
+def show_colormap_image(to_img, save_name = None):
+
+    n_phi = 30
+    n_amp = 100
+    X,Y = np.meshgrid(np.linspace(-np.pi,np.pi,n_phi),np.linspace(1.,0.,n_amp))
+
+    cm = Y*np.exp(1j*X)
+
+    fig, ax = plt.subplots(1,1)
+    img = ax.imshow(to_img(cm.transpose()), extent = [-np.pi, np.pi, 0., 1.], aspect = 30)
+
+    ax.set_xticks([-np.pi,0,np.pi])
+    ax.set_xticklabels([r'$\pi$', '0', r'$\pi$'])
+    ax.set_yticks([0,0.5,1])
+    if save_name:
+        plt.savefig(save_name, dpi = 200)
     
 def complex_correlation(Y1,Y2):
     Y1 = Y1-Y1.mean()
