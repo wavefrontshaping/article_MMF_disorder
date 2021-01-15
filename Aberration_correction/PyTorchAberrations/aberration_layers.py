@@ -10,92 +10,11 @@ from PyTorchAberrations.aberration_functions import complex_mul, conjugate, pi2_
 ################### AUTOGRAD FUNCTIONS #########################
 ################################################################
      
-
-class ComplexTiltFunction(torch.autograd.Function):
-
-    @staticmethod
-    def forward(ctx, input, theta, axis = 0):
-        nx = torch.arange(0,1,1./input.shape[1], dtype = input.dtype)
-        ny = torch.arange(0,1,1./input.shape[2], dtype = input.dtype)
-        
-#         nx = torch.arange(0,input.shape[1], dtype = input.dtype)
-#         ny = torch.arange(0,input.shape[2], dtype = input.dtype)
-        grid = torch.meshgrid(nx,ny)
-        
-        X = grid[axis].type(input.dtype).to(input.device)
-        
-        weight = torch.stack((torch.cos(theta*X),torch.sin(theta*X)), dim = -1)
-        output = complex_mul(input,weight)
-        
-        ctx.save_for_backward(input, weight,theta, X)
-        return output
-
-    @staticmethod
-    def backward(ctx, grad_output):
-
-        input, weight, theta, X = ctx.saved_tensors
-
-        grad_input = grad_theta = None
-
-        if ctx.needs_input_grad[0]:
-            grad_input = complex_mul(grad_output,conjugate(weight))
-
-        if ctx.needs_input_grad[1]:
-            # Calculation of the gradient w.r.t the parameter (here the phase tilt)
-            # CAN BE OPTIMIZED!!!
-            XX = torch.stack((X,X),dim = -1).expand_as(grad_output)
-            grad_theta = torch.stack((-torch.sum(torch.sin(theta*XX)*XX*input*grad_output),
-                                      torch.sum(torch.cos(theta*XX)*XX*pi2_shift(input)*grad_output)),dim=-1)
-
-        return grad_input, grad_theta, None 
-        # None gradient for the axis argument, obviously
-
-class ComplexDefocusFunction(torch.autograd.Function):
-
-    @staticmethod
-    def forward(ctx, input, alpha):
-        nx = torch.arange(0,1,1./input.shape[1], dtype = input.dtype)
-        ny = torch.arange(0,1,1./input.shape[2], dtype = input.dtype)
-#         nx = torch.arange(0,input.shape[1], dtype = input.dtype)
-#         ny = torch.arange(0,input.shape[2], dtype = input.dtype)
-        X,Y = torch.meshgrid(nx,ny)
-        X = X.to(input.device)
-        Y = Y.to(input.device)
-        X0, Y0 = 0.5+0.5/input.shape[1], 0.5+0.5/input.shape[2]
-#         X0, Y0 = (input.shape[1]-1)*.5, (input.shape[2]-1)*.5
-
-        Rsq = (torch.abs(X-X0)**2+torch.abs(Y-Y0)**2)
-        weight = torch.stack((torch.cos(alpha*Rsq),
-                              torch.sin(alpha*Rsq)), dim = -1)
-
-        output = complex_mul(input,weight)
-            
-        
-        ctx.save_for_backward(input, weight, alpha, Rsq)
-        return output
-
-    # This function has only a single output, so it gets only one gradient
-    @staticmethod
-    def backward(ctx, grad_output):
-        input, weight, alpha, Rsq = ctx.saved_tensors
-        
-
-        grad_input = grad_alpha = None
-        if ctx.needs_input_grad[0]:
-            grad_input = complex_mul(grad_output,conjugate(weight))
-
-        if ctx.needs_input_grad[1]:
-
-            Rsq = torch.stack((Rsq,Rsq),dim = -1).expand_as(grad_output)
-            grad_alpha = torch.stack((-torch.sum(torch.sin(alpha*Rsq)*Rsq*input*grad_output),
-                                      torch.sum(torch.cos(alpha*Rsq)*Rsq*pi2_shift(input)*grad_output)),dim=-1)
-
-
-        return grad_input, grad_alpha, None
-    
-    
 class ComplexZernikeFunction(torch.autograd.Function):
-
+    '''
+    Function that apply a complex Zernike polynomial to the phase of a batch 
+    of compleximages (or a matrix).
+    '''
     @staticmethod
     def forward(ctx, input, alpha, j):
         
@@ -180,58 +99,9 @@ class ComplexZernikeFunction(torch.autograd.Function):
 
                 
             F = torch.stack((F,F),dim = -1).expand_as(grad_output)
-            grad_alpha = torch.stack((-torch.sum(torch.sin(alpha*F)*F*input*grad_output),
-                                      torch.sum(torch.cos(alpha*F)*F*pi2_shift(input)*grad_output)),dim=-1)
-
-
-        return grad_input, grad_alpha, None
-    
-class ComplexAstigmatismFunction(torch.autograd.Function):
-
-    @staticmethod
-    def forward(ctx, input, alpha, j):
-        
-        assert j in [0,1]
-        
-        nx = torch.arange(0,1,1./input.shape[1], dtype = input.dtype)
-        ny = torch.arange(0,1,1./input.shape[2], dtype = input.dtype)
-
-        X0, Y0 = 0.5+0.5/input.shape[1], 0.5+0.5/input.shape[2]
-        X,Y = torch.meshgrid(nx,ny)
-        X = X.to(input.device)-X0
-        Y = Y.to(input.device)-Y0
-        
-        
-        if j == 0:
-            XY = 2.*X.mul(Y)
-        elif j ==1:
-            XY = X**2-Y**2
-        
-        weight = torch.stack((torch.cos(alpha*XY),
-                              torch.sin(alpha*XY)), dim = -1)
-
-        output = complex_mul(input,weight)
-            
-        
-        ctx.save_for_backward(input, weight, alpha, XY)
-        return output
-
-    # This function has only a single output, so it gets only one gradient
-    @staticmethod
-    def backward(ctx, grad_output):
-        input, weight, alpha, XY = ctx.saved_tensors
-        
-
-        grad_input = grad_alpha = None
-        if ctx.needs_input_grad[0]:
-            grad_input = complex_mul(grad_output,conjugate(weight))
-
-        if ctx.needs_input_grad[1]:
-
-            XY = torch.stack((XY,XY),dim = -1).expand_as(grad_output)
-            grad_alpha = torch.stack((-torch.sum(torch.sin(alpha*XY)*XY*input*grad_output),
-                                      torch.sum(torch.cos(alpha*XY)*XY*pi2_shift(input)*grad_output)),dim=-1)
-
+            grad_alpha = -torch.sum(torch.sin(alpha*F)*F*input*grad_output) \
+                         + torch.sum(torch.cos(alpha*F)*F*pi2_shift(input)*grad_output)
+            grad_alpha.unsqueeze_(0)
 
         return grad_input, grad_alpha, None
     
@@ -242,7 +112,9 @@ class ComplexAstigmatismFunction(torch.autograd.Function):
 #######################################################
 
 class ComplexZeroPad2d(Module):
-
+    '''
+    Apply zero padding to a batch of 2D complex images (or matrix)
+    '''
     def __init__(self, padding):
         super(ComplexZeroPad2d, self).__init__()
         self.pad_r = ZeroPad2d(padding)
@@ -253,73 +125,28 @@ class ComplexZeroPad2d(Module):
                            self.pad_i(input[...,1])), dim = -1)     
 
 class ComplexZernike(Module):
+    '''
+    Layer that apply a complex Zernike polynomial to the phase of a batch 
+    of compleximages (or a matrix).
+    Only one parameter, the strenght of the polynomial, is learned.
+    Initial value is 0.
+    '''
     def __init__(self, j):
         super(ComplexZernike, self).__init__()
         assert j in range(15)
         self.j = j
-#         self.theta = torch.nn.Parameter(torch.Tensor(1), requires_grad=True)
         self.alpha = torch.nn.Parameter(torch.zeros(1), requires_grad=True)
-#         self.theta.data.uniform_(-1, 1)
+
 
     def forward(self, input):
         return ComplexZernikeFunction.apply(input, self.alpha, self.j)
 
-class ComplexTilt(Module):
-    def __init__(self, axis = 0):
-        super(ComplexTilt, self).__init__()
-        self.axis = axis
-#         self.theta = torch.nn.Parameter(torch.Tensor(1), requires_grad=True)
-        self.theta = torch.nn.Parameter(torch.zeros(1), requires_grad=True)
-#         self.theta.data.uniform_(-1, 1)
-
-    def forward(self, input):
-        return ComplexTiltFunction.apply(input, self.theta, self.axis)
-    
-    
-class ComplexAstigmatism(Module):
-    def __init__(self, j):
-        super(ComplexAstigmatism, self).__init__()
-        self.j = j
-#         self.theta = torch.nn.Parameter(torch.Tensor(1), requires_grad=True)
-        self.theta = torch.nn.Parameter(torch.zeros(1), requires_grad=True)
-#         self.theta.data.uniform_(-1, 1)
-
-    def forward(self, input):
-        return ComplexAstigmatismFunction.apply(input, self.theta, self.j)
-    
-class ComplexDefocus(Module):
-    def __init__(self):
-        super(ComplexDefocus, self).__init__()
-#         self.factor = torch.nn.Parameter(torch.tensor(factor), requires_grad=False)
-#         self.alpha = torch.nn.Parameter(torch.Tensor(1), requires_grad=True)
-        self.alpha = torch.nn.Parameter(torch.zeros(1), requires_grad=True)
-#         self.alpha.data.uniform_(-.1, .1)
-
-    def forward(self, input):
-        return ComplexDefocusFunction.apply(input, self.alpha)
- 
-
-
-
-    
-class ComplexBatchDeformation(Module):
-    def __init__(self, features):
-        super(ComplexBatchDeformation, self).__init__()
-        
-        self.theta = torch.nn.Parameter(torch.zeros((features,2,3)))
-                                        
-        # mask to keep only scaling parameters
-        # parameters 0 and 4 are the ones corresponding to x and y scaling
-        self.mask = torch.tensor([1., 0, 0, 0, 1., 0]).reshape((2,3)).expand(features,2,3)
-
-    def forward(self, input):
-            input = input.permute((0,3,1,2))
-            grid = torch.nn.functional.affine_grid((1.+5e-2*self.theta).mul(self.mask.to(input.device)).type(input.dtype), 
-                                                    input.size())
-
-            return torch.nn.functional.grid_sample(input, grid).permute((0,2,3,1))
-
 class ComplexScaling(Module):
+    '''
+    Layer that apply a global scaling to a stack of 2D complex images (or matrix).
+    Only one parameter, the scaling factor, is learned. 
+    Initial value is 1.
+    '''
     def __init__(self):
         super(ComplexScaling, self).__init__()
         
@@ -329,28 +156,20 @@ class ComplexScaling(Module):
         # parameters 2 and 6 are shifts
 
     def forward(self, input):
-#             print(self.theta.device)
-#             print(input.device)
-#             print(torch.tensor([1, 0, 0, 0, 1, 0], dtype=input.dtype).device)
             input = input.permute((0,3,1,2))
             grid = torch.nn.functional.affine_grid(
                 ((1.+self.theta)*(torch.tensor([1, 0., 0., 0., 1, 0.],
-                                         dtype=input.dtype).to(input.device)) #+ \
-                #(5e-2*self.theta).mul(torch.tensor([0, 1., 1., 1., 0, 1.],
-                                         #dtype=input.dtype).to(input.device))
+                                         dtype=input.dtype).to(input.device))
                 ).reshape((2,3)).expand((input.shape[0],2,3)), 
                                  input.size())                 
                                          
-                                         
-                                         
-#             grid = torch.nn.functional.affine_grid(
-#                 (1.+5e-2*self.theta).mul(torch.tensor([1, 1., 1., 1., 1, 1.],
-#                                          dtype=input.dtype).to(input.device)).reshape((2,3)).expand((input.shape[0],2,3)), 
-#                 input.size())
-
             return torch.nn.functional.grid_sample(input, grid).permute((0,2,3,1))
         
 class ComplexDeformation(Module):
+    '''
+    Layer that apply a global affine transformation to a stack of 2D complex images (or matrix).
+    6 parameters are learned.
+    '''
     def __init__(self):
         super(ComplexDeformation, self).__init__()
         
@@ -360,40 +179,11 @@ class ComplexDeformation(Module):
         # parameters 2 and 6 are shifts
 
     def forward(self, input):
-#             print(self.theta.device)
-#             print(input.device)
-#             print(torch.tensor([1, 0, 0, 0, 1, 0], dtype=input.dtype).device)
             input = input.permute((0,3,1,2))
             grid = torch.nn.functional.affine_grid(
                 ((1.+self.theta).mul(torch.tensor([1, 0., 0., 0., 1, 0.],
-                                         dtype=input.dtype).to(input.device)) #+ \
-                #(5e-2*self.theta).mul(torch.tensor([0, 1., 1., 1., 0, 1.],
-                                         #dtype=input.dtype).to(input.device))
+                                         dtype=input.dtype).to(input.device))
                 ).reshape((2,3)).expand((input.shape[0],2,3)), 
                                  input.size())                 
-                                         
-                                         
-                                         
-#             grid = torch.nn.functional.affine_grid(
-#                 (1.+5e-2*self.theta).mul(torch.tensor([1, 1., 1., 1., 1, 1.],
-#                                          dtype=input.dtype).to(input.device)).reshape((2,3)).expand((input.shape[0],2,3)), 
-#                 input.size())
 
             return torch.nn.functional.grid_sample(input, grid).permute((0,2,3,1))
-
-    
-# class ComplexScaling2D(Module):
-#     def __init__(self):
-#         super(ComplexScaling2D, self).__init__()
-#         self.scaling = torch.nn.Parameter(torch.Tensor(2))
-#         self.scaling.data.uniform_(-0.1, 0.1)
-
-#     def forward(self, input):
-#         input = input.permute((0,3,1,2))
-#         return torch.nn.functional.interpolate(input,
-# #         return torch.nn.Upsample.apply(input,
-#                                                scale_factor = (1.+self.scaling[0],1.+self.scaling[1]),
-# #                                                mode = 'nearest'
-#                                               ).permute((0,2,3,1))
-
-    
