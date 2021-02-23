@@ -1,13 +1,15 @@
 import torch
 import numpy as np
 from torch.nn import Module, Sequential, Identity
-from PyTorchAberrations.aberration_layers import ComplexZeroPad2d, ComplexTilt, ComplexDeformation, ComplexAstigmatism
-from PyTorchAberrations.aberration_layers import ComplexDefocus, ComplexBatchDeformation, ComplexZernike, ComplexScaling
+from PyTorchAberrations.aberration_layers import ComplexZeroPad2d, ComplexDeformation
+from PyTorchAberrations.aberration_layers import ComplexZernike, ComplexScaling
 from PyTorchAberrations.aberration_functions import crop_center, complex_fftshift, complex_ifftshift, conjugate, normalize
 
-
-
 class AberrationModes(torch.nn.Module):
+    '''
+    Model for input and output aberrations.
+    Apply an `Aberration` model to the input and output mode basis.
+    '''
     def __init__(self, 
                      inpoints,
                      onpoints,
@@ -31,7 +33,7 @@ class AberrationModes(torch.nn.Module):
 
     def forward(self,input, output):
         
-        output_modes = output #conjugate(input.permute((1,0,2))).reshape((-1,n,n,2))
+        output_modes = output
         output_modes = self.abberation_output(output_modes)
         # output_modes = normalize(output_modes.reshape((-1,self.onpoints**2,2)),device = self.device).reshape((-1,self.onpoints,self.onpoints,2))
         
@@ -44,6 +46,10 @@ class AberrationModes(torch.nn.Module):
 
     
 class Aberration(torch.nn.Module):
+    '''
+    Model that apply aberrations (direct and Fourier plane) and a global scaling
+    at the input dimension of a matrix.
+    '''
     def __init__(self, 
                  shape,
                  list_zernike_ft,
@@ -70,8 +76,6 @@ class Aberration(torch.nn.Module):
         # scaling x, y
         if deformation == 'single':
             self.deformation = ComplexDeformation()
-        elif deformation == 'batch':
-            self.deformation = ComplexBatchDeformation(features = features)
         elif deformation == 'scaling':
             self.deformation = ComplexScaling()
         else:

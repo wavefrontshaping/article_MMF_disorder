@@ -49,11 +49,6 @@ def complex_ifftshift(A):
                torch.cat((A[...,n_x//2+offset_x:,:n_y//2+offset_y,:],A[...,:n_x//2+offset_x,:n_y//2+offset_y,:]), dim = -3)), 
                      dim = -2)
 
-
-# def get_tilt_tensor(shape, angle, dtype=torch.float64):
-#     X, _ = torch.meshgrid(torch.arange(0,1,1./shape[0]),torch.arange(0,1,1./shape[1]))
-#     return torch.stack((torch.cos(angle*X),torch.sin(angle*X)), dim = -1)
-
 def crop_center(input, size):
     x = input.shape[1]
     y = input.shape[2]
