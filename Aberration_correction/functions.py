@@ -10,7 +10,17 @@ def getZernikeCoefs(states):
     coefs_list = [torch.Tensor.cpu(states[name]).numpy()[0] for name in states.keys()]
     return coefs_list
 
-def showZernikeCoefs(zernike_coefs, thresh = 10, title = None, **kwargs):
+
+
+def showZernikeCoefs(
+    zernike_coefs_list, 
+    labels = None, 
+    emphasis = False,
+    zernike_coefs_2 = None, 
+    thresh = 10, 
+    title = None, 
+    **kwargs
+):
     '''
     Allows a nice display of the amplitude for each Zernike coefficient
 
@@ -31,17 +41,28 @@ def showZernikeCoefs(zernike_coefs, thresh = 10, title = None, **kwargs):
     
     title = title or 'Zernike Coefficients values'
     
+    if labels is not None:
+        assert(len(labels) == len(zernike_coefs_list))
     
     important_coef_index = [] 
-    for i in range(len(zernike_names)):
-        if np.abs(zernike_coefs[i]) > thresh: # completely arbitrary value
-            important_coef_index.append(i)
+    if emphasis:
+        for i in range(len(zernike_names)):
+            if np.abs(zernike_coefs_list[0][i]) > thresh: # completely arbitrary value
+                important_coef_index.append(i)
             
 
-    fig = plt.figure(figsize = (10,6))
+    fig = plt.figure(figsize = (12,7))
     ax1 = fig.add_subplot(111)
 
-    ax1.plot(zernike_names,zernike_coefs,'o')
+    for ind, zernike_coefs in enumerate(zernike_coefs_list):
+        ax1.plot(zernike_names,
+                 zernike_coefs,
+                 'o',
+                 label = labels[ind] if labels else None)
+        
+    if labels:
+        ax1.legend()
+   
     ax1.set_xticklabels(zernike_names, rotation=40, ha='right')
     ax1.grid(axis = 'x',ls = ':')
     ax1.set_xlabel('Name of correction function')
@@ -51,7 +72,8 @@ def showZernikeCoefs(zernike_coefs, thresh = 10, title = None, **kwargs):
     ax1Xs = ax1.get_xticks()
     ax2.set_xticks(ax1Xs)
     ax2.set_xbound(ax1.get_xbound())
-    ax2.set_xticklabels(range(len(zernike_names)))
+#     ax2.set_xticklabels(range(len(zernike_names)))
+    ax2.set_xticklabels(['S']+list(range(2,9+2))+list(range(2,14+2)))
     ax2.set_xlabel('Index of correction function')
 
     ylims = plt.gca().get_ylim()
