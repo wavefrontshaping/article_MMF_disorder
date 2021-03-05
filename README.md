@@ -22,7 +22,7 @@ url = {https://arxiv.org/abs/2010.14813},
 Contain the raw and processed data required to generate the figures and to run the demo codes. 
 - `param.json`: json file containing the parameters of the experiment
 - `TM_modes_X.npz`: transmission matrix in the mode basis after correction for the deformation <img src="https://render.githubusercontent.com/render/math?math=\Delta x = X \mu m">
-- `TM5_0.npy` and `TM5_1.npy`: full transmission matrix in the pixel basis for the reference stat of the system, i.e. no deformation (<img src="https://render.githubusercontent.com/render/math?math=\Delta x = 0 \mu m">).
+- `TM5_0.npy` and `TM5_1.npy`: full transmission matrix in the pixel basis for no deformation (<img src="https://render.githubusercontent.com/render/math?math=\Delta x = -40 \mu m">).
 Because of the 100 Mo restriction of Github, the file is split into two, can be recombined with:
 ```python
 import numpy as np
@@ -30,6 +30,10 @@ part1 = np.load('TM5_0.npy')
 part2 = np.load('TM5_1.npy')
 TM_ref_pix = np.concatenate([part1, part2], axis = 0)
 ```
+- `TM17_0.npy` and `TM17_1.npy`: full transmission matrix in the pixel basis for no deformation (<img src="https://render.githubusercontent.com/render/math?math=\Delta x = 0 \mu m">)
+- `TM25_0.npy` and `TM25_1.npy`: full transmission matrix in the pixel basis for <img src="https://render.githubusercontent.com/render/math?math=\Delta x = 16 \mu m">
+- `TM35_0.npy` and `TM35_1.npy`: full transmission matrix in the pixel basis for <img src="https://render.githubusercontent.com/render/math?math=\Delta x = 36 \mu m">
+- `TM50_0.npy` and `TM50_1.npy`: full transmission matrix in the pixel basis for <img src="https://render.githubusercontent.com/render/math?math=\Delta x = 66 \mu m">
 - `TM52_0.npy` and `TM52_1.npy`: full transmission matrix in the pixel basis for the maximum deformation (<img src="https://render.githubusercontent.com/render/math?math=\Delta x = 70 \mu m">).
 - `conversion_matrices.npz`: contains the matrices `modes_in` and `modes_out` mode matrices computed for a system without aberration. They are generated using [Generate_theoretical_modes/Generate_modes.ipynb](./Generate_theoretical_modes/Generate_modes.ipynb).
 - `modes_in_after_correction.npy`: Change of basis matrix between the input mode basis and the input pixel basis after aberration correction optimization.
