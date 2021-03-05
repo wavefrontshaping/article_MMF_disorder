@@ -66,9 +66,9 @@ It requires a TM measured in the pixel basis and the theoretical modes.
 It learns the aberrations and misalignments of the optical system and compensate for them. It outputs a TM in the basis of the fiber modes.
 
 - [Aberration_correction/Compare_optimization_results.ipynb](./Aberration_correction/Compare_optimization_results.ipynb): 
-Code to compare the results of the optimization for different value of the deformation applied. 
+Code to compare the results of the optimization for different values of the deformation applied. 
 Uses the `TM_XX_optimization_results.npz` data files. 
-Corresponds to the results presented in the Section S5 of the Supplementary Information of the paper.
+Corresponds to the results presented in the Section S5 of the Supplementary Information of manuscript.
 
 - [Aberration_correction/functions.py](./Aberration_correction/functions.py): 
 Some useful function to generate the plots.
