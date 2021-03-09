@@ -39,7 +39,7 @@ TM_ref_pix = np.concatenate([part1, part2], axis = 0)
 - `modes_in_after_correction.npy`: Change of basis matrix between the input mode basis and the input pixel basis after aberration correction optimization.
 - `modes_out_after_correction.npy`: Change of basis matrix between the output mode basis and the output pixel basis after aberration correction optimization.
 - `mask_near_degenerate.npy`: a mask of the same size as the mode basis TM that represents the blocks of quasi-degenerate modes. 
-- `TM_XX_optimization_results.npz` with XX = 17,25,35 and 50. Results of the aberration correction relative to the corresponding full pixel basis transmission matrix `TMXX_0`.
+- `TM_XX_optimization_results.npz` with XX = 17, 25, 35 and 50. Results of the aberration correction relative to the corresponding full pixel basis transmission matrix `TMXX`.
 
 ## /Generate_theoretical_modes
 
