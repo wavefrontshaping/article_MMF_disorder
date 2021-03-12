@@ -52,7 +52,7 @@ See section 2.1 of the Supplementary Information.
 - [Generate_theoretical_modes/Generate_modes.ipynb](./Generate_theoretical_modes/Generate_modes.ipynb): 
 Jupyter notebook containing an sample code to compute the theoretical mode profiles knowing the properties of the multimode fiber.
 - [Generate_theoretical_modes/functions.py](./Generate_theoretical_modes/functions.py): 
-Some useful function to generate the plots.
+Some useful functions to generate the plots.
 
 ## /Aberration_correction
 
@@ -71,7 +71,7 @@ Uses the `TM_XX_optimization_results.npz` data files.
 Corresponds to the results presented in the Section S5 of the Supplementary Information of manuscript.
 
 - [Aberration_correction/functions.py](./Aberration_correction/functions.py): 
-Some useful function to generate the plots.
+Some useful functions to generate the plots.
 
 - [PyTorchAberrations/aberration_models.py](./Aberration_correction/PyTorchAberrations/aberration_models.py):
 The PyTorch model to apply a set of aberrations and a deformation to the change of basis matrices.
@@ -92,7 +92,7 @@ Data processing and creation of the figures in the main text of the article.
 Data processing and creation of the figures for the Supplementary Information.
 
 * [functions.py](./Analysis/functions.py):
-Some useful function to generate the plots.
+Some useful functions to generate the plots.
 
 ## /Layout
 
