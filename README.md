@@ -4,13 +4,19 @@
 
 
 ```
-@misc{2010.14813,
-author = {Maxime W. Matthès and Yaron Bromberg and Julien de Rosny and Sébastien M. Popoff},
-yitle = {Learning and avoiding disorder in multimode fibers},
-year = {2020},
-archivePrefix = "arXiv",
-eprint = {arXiv:2010.14813},
-url = {https://arxiv.org/abs/2010.14813},
+@article{PhysRevX.11.021060,
+  title = {Learning and Avoiding Disorder in Multimode Fibers},
+  author = {Matth\`es, Maxime W. and Bromberg, Yaron and de Rosny, Julien and Popoff, S\'ebastien M.},
+  journal = {Phys. Rev. X},
+  volume = {11},
+  issue = {2},
+  pages = {021060},
+  numpages = {12},
+  year = {2021},
+  month = {Jun},
+  publisher = {American Physical Society},
+  doi = {10.1103/PhysRevX.11.021060},
+  url = {https://link.aps.org/doi/10.1103/PhysRevX.11.021060}
 }
 ```
 
